@@ -42,13 +42,13 @@ Condicional if condicion
 #             print('Te toca caminar.')
 
 # TALLAS
-# talla = 12
+talla = int(input('Ingresa tu número de talla'))
 
-# if talla < 10:
-#     print("Eres talla XS")
-# elif talla < 14:
-#     print("Eres talla S")
-# elif talla < 18:
-#     print("Eres talla M")
-# else:
-#     print("Eres talla L o superior")
+if talla < 10:
+    print("Eres talla XS")
+elif talla < 14:
+    print("Eres talla S")
+elif talla < 18:
+    print("Eres talla M")
+else:
+    print("Eres talla L o superior")
