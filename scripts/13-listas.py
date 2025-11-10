@@ -11,11 +11,17 @@ for pelicula in lista_peliculas:
 
 print(lista_peliculas[0])
 
+print(f"Original: {lista_peliculas}")
+lista_peliculas.append("Gladiador")
+print(f"Después de append: {lista_peliculas}\n")
 # reasignacion
 lista_peliculas[4] = "Otra peli"
 print(lista_peliculas)
 
 
+print(f"Original: {lista_peliculas}")
+lista_peliculas.insert(1, "Interestelar")  # Insertar en la posición 1
+print(f"Después de insert (en índice 1): {lista_peliculas}\n")
 # slicing
 print(lista_peliculas[:2])
 
@@ -51,3 +57,7 @@ letras = ["c", "a", "b"]
 letras.sort()
 print(letras)
 # Resultado: ['a', 'b', 'c']
+
+# Reemplazar 2 películas por 1
+lista_peliculas[0:2] = ["Star Wars: Episodio IV"]
+# Resultado: ['Star Wars: Episodio IV', 'Náufrago', 'Titanic', 'El Conde de Montecristo']

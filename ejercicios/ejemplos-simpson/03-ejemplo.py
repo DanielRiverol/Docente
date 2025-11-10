@@ -10,7 +10,7 @@ print("Simulación de un viaje en avión con Homero y Apu:")
 
 for i in range(veces_a_preguntar):
     # La pregunta de Homero
-    print(f"Homero: ¿Ya llegamos a la India?")
+    print(f"✈️​ Homero: ¿Ya llegamos a la India?")
 
     # La respuesta de Apu, que es la misma en cada iteración del bucle
     print(respuesta_apu)

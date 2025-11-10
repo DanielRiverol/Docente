@@ -12,7 +12,7 @@
 
 
 # numeros pares e impares
-cantidad_num = int(input("Ingresa la cantidad de nùmeros que querés evaluar: "))
+cantidad_num = int(input("Ingresa la cantidad de números que querés evaluar: "))
 contador = 0
 pares = 0
 impares = 0

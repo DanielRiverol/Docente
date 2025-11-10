@@ -59,6 +59,31 @@
 #     print("Has superado el número de intentos. Comunícate con tu banco.")
 
 # V2
+'''
+Consigna: Simulación de Cajero Automático 🏦
+
+Requisitos de Acceso (PIN)
+
+Validación de PIN: El programa debe solicitar un PIN al usuario para acceder.
+
+Límite de Intentos: Se permiten un máximo de tres (3) intentos.
+
+Bloqueo: Si se exceden los 3 intentos, mostrar: "Comunícate con tu banco." y finalizar.
+
+Requisitos del Menú de Operaciones
+
+Si el acceso es exitoso, el programa debe mostrar y ejecutar las siguientes opciones:
+Opción	Descripción
+1-Consultar Saldo
+2-Extracción
+3-Depósito
+4-Salir
+
+Flujo: Después de cualquier operación (1, 2 o 3), el programa debe preguntar al usuario si desea realizar otra operación.
+
+Finalización: El programa termina si el usuario selecciona Salir (Opción 4) o si responde negativamente a la pregunta de continuar operando.
+
+Nota: Las operaciones 2 y 3 deben actualizar el saldo y validar las condiciones necesarias (ej. saldo insuficiente).'''
 
 # # Variables y configuración inicial
 pin_correcto = 1234

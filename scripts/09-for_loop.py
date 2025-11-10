@@ -2,38 +2,38 @@
 bloque de instrucciones
 """
 
-# nombre= 'PENSAR'
+nombre= 'PENSAR'
 
-# for letra in nombre:
-#     print(letra)
+for letra in nombre:
+    print(letra)
 # tradicional
-# for numero in range(0,11):
-#     print(numero)
+for numero in range(0,11):
+    print(numero)
 # steps
-# for numero in range(0,100,10):
-#     print(numero)
+for numero in range(0,100,10):
+    print(numero)
 
 # for tabla de multiplicar
-# rango=range(0,11)
+rango=range(0,11)
 
-# numero= int(input('¿Qué número querés multiplicar? '))
+numero= int(input('¿Qué número querés multiplicar? '))
 
-# for num in rango:
-#     print(f"{numero} x {num} = {numero*num}")
+for num in rango:
+    print(f"{numero} x {num} = {numero*num}")
 
-# for i in range(1, 11):
-#     for j in range(1, 11):
-#         resultado = i * j
-#         print(f"{i} x {j} = {resultado}")
+for i in range(1, 11):
+    for j in range(1, 11):
+        resultado = i * j
+        print(f"{i} x {j} = {resultado}")
 
 
 # stoppers
 # break
-# nombre= "Python"
-# for letra in nombre:
-#     if(letra == 'h'):
-#         break
-#     print(letra)
+nombre= "Python"
+for letra in nombre:
+    if(letra == 'h'):
+        break
+    print(letra)
 
 # Definimos las frutas a buscar en una cadena de texto
 frutas = "naranja,pera,kiwi,manzana,uva"
