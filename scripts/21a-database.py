@@ -1,87 +1,187 @@
 import sqlite3
 
-# Usamos el nombre del archivo de base de datos que ya conocemos.
 DB_FILE = "mi_base.db"
-conexion = None
 
-print("--- Demo de Marcadores Posicional (Tupla) vs. Nombrado (Diccionario) ---")
 
-try:
-    # --- 1. Configuración Inicial ---
-    # Nos conectamos al archivo físico
+# --- CONFIGURACIÓN INICIAL ---
+def iniciar_base():
+    """Crea la tabla si no existe. Abre y cierra conexión manualmente."""
     conexion = sqlite3.connect(DB_FILE)
     cursor = conexion.cursor()
-    print(f"Conexión al archivo '{DB_FILE}' establecida.")
 
-    # Creamos la tabla (IF NOT EXISTS es seguro de ejecutar múltiples veces)
-    cursor.execute(
-        """
+    sql = """
     CREATE TABLE IF NOT EXISTS usuarios (
-        id INTEGER PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         nombre TEXT,
         email TEXT,
         edad INTEGER
     );
     """
-    )
-    print("Tabla 'usuarios' asegurada (creada si no existía).")
+    cursor.execute(sql)
+    conexion.commit()  # Guardamos cambios
+    conexion.close()  # ¡Cerramos manual!
 
-    # --- 2. MÉTODO 1: Posicional (?) con TUPLA ---
-    # El orden importa.
 
-    print("\n--- MÉTODO 1: Insertando con Marcador Posicional (?) y Tupla ---")
+# --- FUNCIONES DEL SISTEMA ---
 
-    sql_posicional = "INSERT INTO usuarios (nombre, email, edad) VALUES (?, ?, ?);"
 
-    # Los datos en una tupla, en el orden correcto
-    datos_ana = ("Ana García", "ana@correo.com", 28)
+def agregar_usuario():
+    print("\n--- AGREGAR USUARIO ---")
 
-    print(f"SQL: {sql_posicional}")
-    print(f"Datos: {datos_ana}")
+    # 1. Inputs dinámicos
+    nombre = input("Dime el nombre: ")
+    email = input("Dime el email: ")
+    edad_str = input("Dime la edad: ")  # Lo leemos como texto primero
 
-    cursor.execute(sql_posicional, datos_ana)
-    print("-> Usuario 'Ana' insertado.")
+    # Validación simple para que no falle si no es numero
+    if not edad_str.isdigit():
+        print("Error: La edad debe ser un número.")
+        return
 
-    # --- 3. MÉTODO 2: Nombrado (:) con DICCIONARIO ---
-    # El orden NO importa, solo los nombres de las llaves.
+    edad = int(edad_str)
 
-    print("\n--- MÉTODO 2: Insertando con Marcador Nombrado (:) y Diccionario ---")
+    # 2. Diccionario
+    mis_datos = {"x_nombre": nombre, "x_email": email, "x_edad": edad}
 
-    sql_nombrado = "INSERT INTO usuarios (nombre, email, edad) VALUES (:el_nombre, :el_email, :la_edad);"
+    # 3. Base de Datos (Manual)
+    try:
+        conexion = sqlite3.connect(DB_FILE)
+        cursor = conexion.cursor()
 
-    # Los datos en un diccionario.
-    datos_luis = {
-        "la_edad": 35,
-        "el_nombre": "Luis Pérez",
-        "el_email": "luis@correo.com",
-    }
+        sql = "INSERT INTO usuarios (nombre, email, edad) VALUES (:x_nombre, :x_email, :x_edad);"
+        cursor.execute(sql, mis_datos)
 
-    print(f"SQL: {sql_nombrado}")
-    print(f"Datos: {datos_luis}")
+        conexion.commit()  # Importante guardar
+        print("-> Usuario guardado.")
 
-    cursor.execute(sql_nombrado, datos_luis)
-    print("-> Usuario 'Luis' insertado.")
+    except sqlite3.Error as e:
+        print(f"Error de BD: {e}")
+    finally:
+        # Esto asegura que se cierre aunque haya error
+        if conexion:
+            conexion.close()
 
-    # --- 4. Guardar y Verificar ---
-    print("\nGuardando cambios (commit)...")
-    conexion.commit()
 
-    print("\n--- Verificando todos los datos en la BD ---")
-    cursor.execute("SELECT * FROM usuarios;")
+def listar_usuarios():
+    print("\n--- VER USUARIOS ---")
 
-    resultados = cursor.fetchall()
+    try:
+        conexion = sqlite3.connect(DB_FILE)
+        cursor = conexion.cursor()
 
-    for usuario in resultados:
-        # usuario es una tupla: (id, nombre, email, edad)
-        print(
-            f"  ID: {usuario[0]}, Nombre: {usuario[1]}, Email: {usuario[2]}, Edad: {usuario[3]}"
-        )
+        cursor.execute("SELECT * FROM usuarios;")
+        resultados = cursor.fetchall()
 
-    print("---------------------------------------------")
+        if not resultados:
+            print("La base de datos está vacía.")
+        else:
+            for usuario in resultados:
+                # usuario es (id, nombre, email, edad)
+                print(f"ID: {usuario[0]} | Nombre: {usuario[1]} | Email: {usuario[2]}")
 
-except sqlite3.Error as e:
-    print(f"¡Error de SQLite! {e}")
-finally:
-    if conexion:
-        conexion.close()
-        print("Conexión cerrada.")
+    except sqlite3.Error as e:
+        print(f"Error: {e}")
+    finally:
+        if conexion:
+            conexion.close()
+
+
+def modificar_usuario():
+    print("\n--- MODIFICAR EMAIL ---")
+    listar_usuarios()  # Mostramos la lista para ver el ID
+
+    id_str = input("Introduce el ID del usuario a modificar: ")
+    if not id_str.isdigit():
+        print("El ID debe ser número.")
+        return
+
+    nuevo_email = input("Introduce el nuevo email: ")
+
+    # Diccionario
+    mis_datos = {"filtro_id": int(id_str), "dato_email": nuevo_email}
+
+    try:
+        conexion = sqlite3.connect(DB_FILE)
+        cursor = conexion.cursor()
+
+        sql = "UPDATE usuarios SET email = :dato_email WHERE id = :filtro_id;"
+        cursor.execute(sql, mis_datos)
+        conexion.commit()
+
+        if cursor.rowcount > 0:
+            print("-> Usuario actualizado.")
+        else:
+            print("-> No encontré ese ID.")
+
+    except sqlite3.Error as e:
+        print(f"Error: {e}")
+    finally:
+        if conexion:
+            conexion.close()
+
+
+def borrar_usuario():
+    print("\n--- BORRAR USUARIO ---")
+    listar_usuarios()
+
+    id_str = input("Introduce el ID del usuario a eliminar: ")
+    if not id_str.isdigit():
+        print("El ID debe ser número.")
+        return
+
+    # Diccionario
+    mis_datos = {"id_a_borrar": int(id_str)}
+
+    try:
+        conexion = sqlite3.connect(DB_FILE)
+        cursor = conexion.cursor()
+
+        sql = "DELETE FROM usuarios WHERE id = :id_a_borrar;"
+        cursor.execute(sql, mis_datos)
+        conexion.commit()
+
+        if cursor.rowcount > 0:
+            print("-> Usuario eliminado.")
+        else:
+            print("-> No encontré ese ID.")
+
+    except sqlite3.Error as e:
+        print(f"Error: {e}")
+    finally:
+        if conexion:
+            conexion.close()
+
+
+# --- MENÚ PRINCIPAL ---
+
+
+def menu_principal():
+    iniciar_base()  # Aseguramos que la tabla exista al arrancar
+
+    while True:
+        print("\n=== MENU SIN WITH ===")
+        print("1. Insertar")
+        print("2. Ver Lista")
+        print("3. Modificar")
+        print("4. Borrar")
+        print("5. Salir")
+
+        opcion = input("Elige opción: ")
+
+        if opcion == "1":
+            agregar_usuario()
+        elif opcion == "2":
+            listar_usuarios()
+        elif opcion == "3":
+            modificar_usuario()
+        elif opcion == "4":
+            borrar_usuario()
+        elif opcion == "5":
+            print("Adiós.")
+            break
+        else:
+            print("Opción incorrecta.")
+
+
+if __name__ == "__main__":
+    menu_principal()
